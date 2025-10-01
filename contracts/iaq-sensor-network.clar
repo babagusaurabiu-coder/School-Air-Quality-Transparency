@@ -101,10 +101,10 @@
 
 (define-private (add-sensor-to-location (location-hash (buff 32)) (sensor-id uint))
   (let ((current-sensors (default-to (list) (get sensor-ids (map-get? location-sensors { location-hash: location-hash })))))
-    (map-set location-sensors
+    (ok (map-set location-sensors
       { location-hash: location-hash }
       { sensor-ids: (unwrap! (as-max-len? (append current-sensors sensor-id) u50) ERR_INVALID_DATA) }
-    )
+    ))
   )
 )
 
@@ -249,7 +249,7 @@
     valid: (is-calibration-valid sensor-id),
     blocks-remaining: (match (map-get? calibration-data { sensor-id: sensor-id })
       calibration
-      (if (>= (+ (get calibration-block calibration) CALIBRATION_VALIDITY_BLOCKS) block-height)
+      (if (>= (+ (get calibration-block calibration) CALIBRATION_VALIDITY_BLOCKS) stacks-block-height)
         (some (- (+ (get calibration-block calibration) CALIBRATION_VALIDITY_BLOCKS) stacks-block-height))
         (some u0)
       )
