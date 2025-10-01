@@ -117,12 +117,18 @@
 )
 
 (define-private (get-priority-level (co2-level uint) (pm25-level uint))
-  (cond
-    ((and (> co2-level (* CO2_THRESHOLD u2)) (> pm25-level (* PM25_THRESHOLD u2))) u5) ;; Critical
-    ((or (> co2-level (* CO2_THRESHOLD u15 u10)) (> pm25-level (* PM25_THRESHOLD u15 u10))) u4) ;; High
-    ((or (> co2-level CO2_THRESHOLD) (> pm25-level PM25_THRESHOLD)) u3) ;; Medium
-    ((or (> co2-level (* CO2_THRESHOLD u8 u10)) (> pm25-level (* PM25_THRESHOLD u8 u10))) u2) ;; Low
-    u1 ;; Normal
+  (if (and (> co2-level (* CO2_THRESHOLD u2)) (> pm25-level (* PM25_THRESHOLD u2)))
+    u5 ;; Critical
+    (if (or (> co2-level (* CO2_THRESHOLD u15 u10)) (> pm25-level (* PM25_THRESHOLD u15 u10)))
+      u4 ;; High
+      (if (or (> co2-level CO2_THRESHOLD) (> pm25-level PM25_THRESHOLD))
+        u3 ;; Medium
+        (if (or (> co2-level (* CO2_THRESHOLD u8 u10)) (> pm25-level (* PM25_THRESHOLD u8 u10)))
+          u2 ;; Low
+          u1 ;; Normal
+        )
+      )
+    )
   )
 )
 

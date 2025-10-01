@@ -116,7 +116,7 @@
   (match (map-get? grant-proposals { grant-id: grant-id })
     grant-data
     (and (is-eq (get status grant-data) "active")
-    (< stacks-block-height (get deadline grant-data))
+         (< stacks-block-height (get deadline grant-data)))
     false
   )
 )
@@ -384,10 +384,10 @@
           { location-hash: location-hash, feed-type: feed-type }
           {
             data-points: (unwrap! (as-max-len? (append current-data new-data-point) u100) ERR_INVALID_AMOUNT),
-            timestamps: (unwrap! (as-max-len? (append current-timestamps block-height) u100) ERR_INVALID_AMOUNT),
+            timestamps: (unwrap! (as-max-len? (append current-timestamps stacks-block-height) u100) ERR_INVALID_AMOUNT),
             aggregation-method: aggregation-method,
-            update-frequency: (- block-height (get last-update feed)),
-            last-update: block-height,
+            update-frequency: (- stacks-block-height (get last-update feed)),
+            last-update: stacks-block-height,
             data-quality-score: data-quality-score
           }
         )
@@ -396,10 +396,10 @@
         { location-hash: location-hash, feed-type: feed-type }
         {
           data-points: (list new-data-point),
-          timestamps: (list block-height),
+          timestamps: (list stacks-block-height),
           aggregation-method: aggregation-method,
           update-frequency: u0,
-          last-update: block-height,
+          last-update: stacks-block-height,
           data-quality-score: data-quality-score
         }
       )
@@ -430,7 +430,7 @@
         (merge data
           {
             total-contributions: (+ (get total-contributions data) u1),
-            reputation-score: (min (+ (get reputation-score data) u1) u100)
+            reputation-score: (if (< (+ (get reputation-score data) u1) u100) (+ (get reputation-score data) u1) u100)
           }
         )
       )
@@ -440,7 +440,7 @@
           total-contributions: u1,
           grants-supported: u0,
           reputation-score: u1,
-          active-since: block-height,
+          active-since: stacks-block-height,
           contribution-categories: (list)
         }
       )

@@ -150,12 +150,8 @@
 )
 
 (define-private (should-send-notification (location-hash (buff 32)) (severity uint))
-  (let ((last-notification-block (default-to u0 
-                                   (get last-notification 
-                                        (map-get? location-subscribers { location-hash: location-hash })))))
-    (or (>= severity u4) ;; Always send high/critical alerts
-        (> (- stacks-block-height last-notification-block) NOTIFICATION_COOLDOWN_BLOCKS))
-  )
+  (or (>= severity u4) ;; Always send high/critical alerts
+      (> stacks-block-height NOTIFICATION_COOLDOWN_BLOCKS))
 )
 
 ;; Public Functions
